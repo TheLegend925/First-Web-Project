@@ -3,15 +3,32 @@
 
 <head>
     <style>
+        @media only screen and (max-width: 750px) {
+
+            #playAgain,
+            #revealAnswer {
+                display: flex;
+                float: right;
+                flex-direction: column;
+            }
+        }
+
         #box {
             border: 5px groove blue;
+            border-radius: 5%;
             padding: 10px;
             padding-top: 0.1px;
-            margin: 10px 5px;
+            margin: 1% 0.5%;
+            background-color: lightblue;
+            max-width: 550px;
         }
 
         .range {
             display: inline-block;
+        }
+
+        .input {
+            max-width: 100px
         }
     </style>
 </head>
@@ -21,18 +38,18 @@
     <div id="box">
         <h4 id="header">Guess a number between 1 and 10000</h4>
 
-        <input id="guess" value="" />
+        <input id="guess" class="input" value="" />
 
-        <button onclick="guess()">Guess the Number</button>
+        <button onclick="guess()" class="floatRight" id="guessButton">Guess the Number</button>
         <button onclick="playAgain()" id="playAgain">Pick another Number</button>
-        <button onclick="revealAnswer()">Reveal Answer</button>
+        <button onclick="revealAnswer()" id="revealAnswer">Reveal Answer</button>
 
         <p id="afterGuess"></p>
         <p id="numberBetween"></p>
         <p id="guesses"></p>
 
-        <br><br><span>Largest Number<br></span>
-        <input id="highest" class="range" value="10000" />
+        <br><span>Largest Number<br></span>
+        <input id="highest" class="range input" value="10000" />
         <button onclick="setHighest()">Click to set</button>
 
     </div>
@@ -74,7 +91,8 @@
                 document.getElementById("afterGuess").innerHTML = yourGuess + " is too large";
                 smallerThan = yourGuess;
             } else if (yourGuess == number) {
-                document.getElementById("afterGuess").innerHTML = "You guessed the number in " + tries + "!";
+                document.getElementById("afterGuess").innerHTML =
+                    "You guessed the number in " + tries + "!";
                 document.getElementById("playAgain").innerHTML = "Play Again";
                 guessedRight = true;
             }
