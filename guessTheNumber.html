@@ -5,6 +5,11 @@
     <style>
         @media only screen and (max-width: 750px) {}
 
+        body {
+            background-color: #ccc;
+            font-family: "Comic Sans MS";
+        }
+
         #playAgain,
         #revealAnswer {
             display: flex;
@@ -12,45 +17,138 @@
             flex-direction: column;
         }
 
+
+
         #box {
-            border: 5px groove blue;
+            border: 5px groove rgb(52, 152, 219);
             border-radius: 10px;
             padding: 10px;
             padding-top: 0.1px;
             margin: 0.5%;
-            background-color: lightblue;
+            background-color: rgb(179, 229, 252);
             max-width: 550px;
             position: fixed;
             width: 100%;
-
         }
 
-        #expandable {
-            width: 550px;
-            height: 30px;
+        #aboveSwitch {
+            position: relative;
+            left: 150px;
         }
 
-        #expanded {}
+        .adjustSizeFont {
+            font-size: 13px;
+        }
+
+        .switch {
+            height: 22px;
+            background-color: lightgray;
+            border: 2px solid gray;
+            border-radius: 10px;
+            display: inline-block;
+            position: relative;
+            left: 100px;
+            top: 5px;
+            padding: 0 17px;
+            outline: none;
+        }
+
+        .switchInside {
+            height: 16px;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 1000px;
+            display: inline-block;
+            position: relative;
+            left: 64px;
+            top: 0px;
+            padding: 3px 7px;
+            margin: 1px 10px 1px 1px;
+            outline: none;
+            transition: margin 0.1s;
+        }
+
+        .largestNum {
+            position: relative;
+            left: 8px;
+        }
+
+        .answerLines {
+            color: rgb(0, 0, 150);
+            font-size: 15px;
+        }
 
         .adjustSizeInput {
             display: inline-block;
         }
 
-        .adjustSize {}
+        #newLargestNumber {
+            position: relative;
+            left: 4px;
+        }
+
+        #setNumberRangeButton {
+            position: relative;
+            left: 7px;
+            height: 21px;
+        }
+
+        .expandButton {
+            width: 550px;
+            height: 30px;
+            border-style: solid;
+            border-radius: 10px 10px 0 0;
+            border: 1px solid lightskyblue;
+            background-color: lightcyan;
+            outline: none;
+        }
+
+        .expanded {
+            border: solid lightskyblue;
+            border-width: 0 1px 1px 1px;
+            background-color: lightcyan;
+            padding: 10px;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+        }
+
 
         input {
             max-width: 100px
         }
 
-        button {
+        button.notExpandable {
             display: inline;
             border: 1px solid lightskyblue;
+            border-bottom: 1.5px groove lightskyblue;
+            border-right: 1.5px groove lightskyblue;
             background-color: lightcyan;
             border-radius: 3px;
+            outline: none;
+        }
+
+        .nonSwitchButton:hover,
+        #expandButton:hover {
+            background-color: rgb(174, 214, 241);
+        }
+
+        button.notExpandable:active {
+            position: relative;
+            border-style: solid;
+            left: 1px;
+            top: 1px;
         }
 
         span {
             font-size: 15px;
+        }
+
+        span,
+        h4,
+        div,
+        button,
+        input {
+            color: rgb(0, 0, 120);
         }
     </style>
 </head>
@@ -62,30 +160,32 @@
 
         <input type="number" autocomplete="off" id="guess" value="" />
 
-        <button onclick="guess()" class="floatRight" id="guessButton">Guess the Number</button>
+        <button onclick="guess()" class="floatRight notExpandable nonSwitchButton" id="guessButton">Guess the
+            Number</button>
 
-        <button onclick="playAgain()" id="playAgain">Pick another Number</button>
-        <button onclick="revealAnswer()" id="revealAnswer">Reveal Answer</button>
+        <button onclick="playAgain()" class="notExpandable nonSwitchButton" id="playAgain">Pick another Number</button>
+        <button onclick="revealAnswer()" class="notExpandable nonSwitchButton" id="revealAnswer">Reveal Answer</button>
 
         <p id="ln1" class="answerLines"></p>
         <p id="ln2" class="answerLines"></p>
         <p id="ln3" class="answerLines"></p>
 
+        <br><button onclick="expand()" class="expandButton nonSwitchButton">More Options</button>
+        <div class="expanded">
 
-        <div id="expanded">
-            <br><button onclick="expand()" id="expandable">expand</button><br>
-            <span class="adjustSize">Smallest Number</span>
-            <span class="adjustSize">Largest Number<br></span>
-            <input type="number" autocomplete="off" id="newSmallestNumber" class="adjustSizeInput adjustSize"
-                value="1" />
-            <input type="number" autocomplete="off" id="newLargestNumber" class="adjustSizeInput adjustSize"
-                value="10000" />
-            <button onclick="setRange()">Click to set</button>
+            <span class="adjustSizeFont">Smallest Number</span>
+            <span class="adjustSize largestNum adjustSizeFont">Largest Number</span>
+            <span id="aboveSwitch">Some Random Switch<br></span>
+            <input type="number" autocomplete="off" id="newSmallestNumber" class="adjustSizeInput" value="1" />
+            <input type="number" autocomplete="off" id="newLargestNumber" class="adjustSizeInput" value="10000" />
+            <button onclick="setRange()" id="setNumberRangeButton" class="notExpandable nonSwitchButton">Click to
+                set</button>
+            <button onclick="switchClicked()" class="switch" id="switch">
+                <button onclick="switchClicked()" class="switchInside" id="switchInside"></button>
+            </button>
         </div>
 
     </div>
-
-
 
     <script>
         var largest = 10000; //does not change when guessing
@@ -194,6 +294,23 @@
                 guessedRight = true;
                 playAgain();
                 guessedRight = false;
+            }
+        }
+
+        function expand() { }
+
+        var switchOn = false;
+
+        function switchClicked() {
+
+            if (switchOn == false) {
+                document.getElementById("switch").style.background = "#aed6f1";
+                document.getElementById("switchInside").style.margin = "1px 1px 1px 17px";
+                switchOn = true;
+            } else {
+                document.getElementById("switch").style.background = "#ccc";
+                document.getElementById("switchInside").style.margin = "1px 10px 1px 1px";
+                switchOn = false;
             }
         }
 
