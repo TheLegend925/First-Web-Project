@@ -36,6 +36,10 @@
             left: 150px;
         }
 
+        #guess {
+            max-width: 150px;
+        }
+
         .adjustSizeFont {
             font-size: 13px;
         }
@@ -158,7 +162,7 @@
     <div id="box">
         <h4 id="header">Guess a number between 1 and 10000</h4>
 
-        <input type="number" autocomplete="off" id="guess" value="" />
+        <input type="number" placeholder="Type your guess here" autocomplete="off" id="guess" value="" />
 
         <button onclick="guess()" class="floatRight notExpandable nonSwitchButton" id="guessButton">Guess the
             Number</button>
@@ -210,6 +214,7 @@
 
         function guess() { //when guess button clicked
             var yourGuess = document.getElementById("guess").value;
+            var n = yourGuess.indexOf("e");
             guessedRight = false;
 
             document.getElementById("guess").value = "";
@@ -221,8 +226,12 @@
             }
 
             if (yourGuess < Number(smallestPossible) || yourGuess > Number(largestPossible)) {
-                document.getElementById("ln1").innerHTML =
-                    "Please guess between " + smallestPossible + " and " + largestPossible;
+                if (yourGuess == "") {
+                    document.getElementById("ln1").innerHTML = "Please type a number";
+                } else {
+                    document.getElementById("ln1").innerHTML =
+                        "Please guess between " + smallestPossible + " and " + largestPossible;
+                }
                 validNumber = false;
             } else if (yourGuess < number) {
                 document.getElementById("ln1").innerHTML = yourGuess + " is too small";
@@ -237,6 +246,7 @@
                     "The answer is " + number + "!"
                 document.getElementById("ln2").innerHTML = "You guessed the number in " + tries + "!";
                 document.getElementById("playAgain").innerHTML = "Play Again";
+                document.getElementById("guessButton").disabled = true;
                 guessedRight = true;
             }
 
@@ -265,7 +275,8 @@
         }
 
         function playAgain() { //when pick another number or play again is pressed
-            guesses = [];
+            document.getElementById("guessButton").disabled = false;
+            document.getElementById("ln3").innerHTML = "";
             guessedRight == false;
             document.getElementById("playAgain").innerHTML = "Pick another Number";
             document.getElementById("ln1").innerHTML = "New number chosen";
