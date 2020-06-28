@@ -5,6 +5,11 @@
     <style>
         @media only screen and (max-width: 750px) {}
 
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         body {
             background-color: #ccc;
             font-family: "Comic Sans MS";
@@ -12,9 +17,12 @@
 
         #playAgain,
         #revealAnswer {
-            display: flex;
+            display: block;
             float: right;
-            flex-direction: column;
+            width: 150px;
+            height: 20px;
+            text-align: center;
+
         }
 
 
@@ -33,11 +41,46 @@
 
         #aboveSwitch {
             position: relative;
-            left: 150px;
+            left: 140px;
+            font-size: 12px;
         }
 
         #guess {
-            max-width: 150px;
+            max-width: 130px;
+        }
+
+        #rightSideButtons {
+            float: right;
+            width: 150px;
+            height: 20px;
+        }
+
+        #switchInfo {
+            border: 0.5px solid gray;
+            border-radius: 50%;
+            background-color: lightgray;
+            width: 15px;
+            height: 15px;
+            font-size: 10px;
+            position: absolute;
+            top: 175px;
+            left: 525px;
+            outline: none;
+        }
+
+        #infoText {
+            position: relative;
+            right: 2px;
+            bottom: 10px;
+            color: black;
+        }
+
+        .infoBox {
+            display: none;
+            position: absolute;
+            border: 1px solid lightskyblue;
+            background-color: lightcyan;
+            font-size: 15px;
         }
 
         .adjustSizeFont {
@@ -167,8 +210,12 @@
         <button onclick="guess()" class="floatRight notExpandable nonSwitchButton" id="guessButton">Guess the
             Number</button>
 
-        <button onclick="playAgain()" class="notExpandable nonSwitchButton" id="playAgain">Pick another Number</button>
-        <button onclick="revealAnswer()" class="notExpandable nonSwitchButton" id="revealAnswer">Reveal Answer</button>
+        <div id="rightSideButtons">
+            <button onclick="playAgain()" class="notExpandable nonSwitchButton rightSideButtons" id="playAgain">Pick
+                another Number</button>
+            <button onclick="revealAnswer()" class="notExpandable nonSwitchButton rightSideButtons"
+                id="revealAnswer">Reveal Answer</button>
+        </div>
 
         <p id="ln1" class="answerLines"></p>
         <p id="ln2" class="answerLines"></p>
@@ -179,7 +226,11 @@
 
             <span class="adjustSizeFont">Smallest Number</span>
             <span class="adjustSize largestNum adjustSizeFont">Largest Number</span>
-            <span id="aboveSwitch">Some Random Switch<br></span>
+            <span id="aboveSwitch">Keep Number after Guess<br></span>
+            <button onclick="showInfo()" id="switchInfo">
+                <p id="infoText">?</p>
+            </button>
+            <div class=infoBox>This will save time with larger numbers</div>
             <input type="number" autocomplete="off" id="newSmallestNumber" class="adjustSizeInput" value="1" />
             <input type="number" autocomplete="off" id="newLargestNumber" class="adjustSizeInput" value="10000" />
             <button onclick="setRange()" id="setNumberRangeButton" class="notExpandable nonSwitchButton">Click to
@@ -201,6 +252,7 @@
         var guessedRight = false;
         var validNumber = true;
         var tries = 0;
+        var switchOn = false;
 
         document.getElementById("header").innerHTML =
             "Guess a number between " + smallest + " and " + largest;
@@ -217,7 +269,9 @@
             var n = yourGuess.indexOf("e");
             guessedRight = false;
 
-            document.getElementById("guess").value = "";
+            if (switchOn == false) {
+                document.getElementById("guess").value = "";
+            }
 
             if (guesses.length == 0) {
                 tries = "1 try"
@@ -310,19 +364,23 @@
 
         function expand() { }
 
-        var switchOn = false;
 
         function switchClicked() {
 
             if (switchOn == false) {
                 document.getElementById("switch").style.background = "#aed6f1";
                 document.getElementById("switchInside").style.margin = "1px 1px 1px 17px";
+
                 switchOn = true;
             } else {
                 document.getElementById("switch").style.background = "#ccc";
                 document.getElementById("switchInside").style.margin = "1px 10px 1px 1px";
                 switchOn = false;
             }
+        }
+
+        function showInfo() {
+            var shown = false;
         }
 
     </script>
