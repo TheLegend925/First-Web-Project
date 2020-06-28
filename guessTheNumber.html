@@ -3,6 +3,13 @@
 
 <head>
     <style>
+        #box {
+            border: 5px groove blue;
+            padding: 10px;
+            padding-top: 0.1px;
+            margin: 10px 5px;
+        }
+
         .range {
             display: inline-block;
         }
@@ -11,21 +18,24 @@
 
 <body>
 
-    <h4 id="header">Guess a number between 1 and 10000</h4>
+    <div id="box">
+        <h4 id="header">Guess a number between 1 and 10000</h4>
 
-    <input id="guess" value="" />
+        <input id="guess" value="" />
 
-    <button onclick="guess()">Guess the Number</button>
-    <button onclick="revealAnswer()">Reveal Answer</button>
-    <button onclick="playAgain()" id="playAgain">Pick another Number</button>
+        <button onclick="guess()">Guess the Number</button>
+        <button onclick="playAgain()" id="playAgain">Pick another Number</button>
+        <button onclick="revealAnswer()">Reveal Answer</button>
 
-    <p id="afterGuess"></p>
-    <p id="numberBetween"></p>
-    <p id="guesses"></p>
+        <p id="afterGuess"></p>
+        <p id="numberBetween"></p>
+        <p id="guesses"></p>
 
-    <br><br><span>Largest Number<br></span>
-    <input id="highest" class="range" value="10000" />
-    <button onclick="setHighest()">Click to set</button>
+        <br><br><span>Largest Number<br></span>
+        <input id="highest" class="range" value="10000" />
+        <button onclick="setHighest()">Click to set</button>
+
+    </div>
 
     <script>
         var largest = 10000;
@@ -33,8 +43,10 @@
         var largerThan = smallest;
         var smallerThan = largest;
         var guesses = [];
-        var number = getRndInteger(largest, smallest);
+        var number = getRndInteger(smallest, largest);
         var guessedRight = false;
+        var validNumber = true;
+        var tries = 0;
 
         document.getElementById("header").innerHTML =
             "Guess a number between " + smallest + " and " + largest;
@@ -45,14 +57,24 @@
 
             document.getElementById("guess").value = "";
 
-            if (yourGuess < number) {
+            if (guesses.length == 0) {
+                tries = "1 try"
+            } else {
+                tries = (guesses.length + 1) + " tries"
+            }
+
+            if (yourGuess < smallest || yourGuess > largest) {
+                document.getElementById("afterGuess").innerHTML =
+                    "Please guess between " + smallest + " and " + largest;
+                validNumber = false;
+            } else if (yourGuess < number) {
                 document.getElementById("afterGuess").innerHTML = yourGuess + " is too small";
                 largerThan = yourGuess;
             } else if (yourGuess > number) {
                 document.getElementById("afterGuess").innerHTML = yourGuess + " is too large";
                 smallerThan = yourGuess;
             } else if (yourGuess == number) {
-                document.getElementById("afterGuess").innerHTML = "You guessed it right!";
+                document.getElementById("afterGuess").innerHTML = "You guessed the number in " + tries + "!";
                 document.getElementById("playAgain").innerHTML = "Play Again";
                 guessedRight = true;
             }
@@ -61,8 +83,11 @@
             document.getElementById("numberBetween").innerHTML =
                 "The answer is between " + largerThan + " and " + smallerThan + ".";
 
-            guesses.push(yourGuess)
-            document.getElementById("guesses").innerHTML = "Your guesses: " + guesses.join(", ");
+            if (validNumber == true) {
+                guesses.push(yourGuess)
+                document.getElementById("guesses").innerHTML = "Your guesses: " + guesses.join(", ");
+            }
+            validNumber = true;
         }
 
         function getRndInteger(min, max) {
@@ -77,9 +102,9 @@
 
         function playAgain() {
             guesses = []
+            guessedRight == false;
             document.getElementById("guesses").innerHTML = "Your guesses: " + guesses.join(", ");
             document.getElementById("playAgain").innerHTML = "Pick another Number";
-            guessedRight == false;
             document.getElementById("afterGuess").innerHTML = "New number chosen";
             largerThan = smallest;
             smallerThan = largest;
@@ -99,6 +124,9 @@
             largerThan = smallest;
             smallerThan = largest;
             number = getRndInteger(smallest, largest);
+            guessedRight = true;
+            playAgain();
+            guessedRight = false;
         }
     </script>
 
