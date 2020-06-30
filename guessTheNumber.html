@@ -15,6 +15,29 @@
             font-family: "Comic Sans MS";
         }
 
+        #progressBorder {
+            border-radius: 1000px;
+            border: 3px solid lightskyblue;
+            position: relative;
+            top: 15px;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        #progress {
+            background-color: lightcyan;
+            border-radius: 1000px;
+            position: relative;
+            margin: 3px;
+            width: 0;
+            height: 10px;
+            position: relative;
+            bottom: 3px;
+            left: 2px;
+            z-index: -1;
+            transition: 1s;
+        }
+
         #playAgain,
         #revealAnswer {
             display: block;
@@ -66,21 +89,6 @@
             top: 175px;
             left: 525px;
             outline: none;
-        }
-
-        #infoText {
-            position: relative;
-            right: 2px;
-            bottom: 10px;
-            color: black;
-        }
-
-        .infoBox {
-            display: none;
-            position: absolute;
-            border: 1px solid lightskyblue;
-            background-color: lightcyan;
-            font-size: 15px;
         }
 
         .adjustSizeFont {
@@ -140,7 +148,7 @@
             height: 21px;
         }
 
-        .expandButton {
+        .collapsible {
             width: 550px;
             height: 30px;
             border-style: solid;
@@ -150,15 +158,30 @@
             outline: none;
         }
 
-        .expanded {
+        #collapsibleMenu {
             border: solid lightskyblue;
             border-width: 0 1px 1px 1px;
             background-color: lightcyan;
             padding: 10px;
             border-radius: 0 0 10px 10px;
             overflow: hidden;
+            /* max-height: 0; */
+            transition: max-height 0.2s ease-out;
         }
 
+        .collapsible:after {
+            /* content: '\02795'; */
+            /* Unicode character for "plus" sign (+) */
+            font-size: 13px;
+            color: white;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .active:after {
+            content: "\2796";
+            /* Unicode character for "minus" sign (-) */
+        }
 
         input {
             max-width: 100px
@@ -175,7 +198,7 @@
         }
 
         .nonSwitchButton:hover,
-        #expandButton:hover {
+        #collapsible:hover {
             background-color: rgb(174, 214, 241);
         }
 
@@ -203,6 +226,9 @@
 <body>
 
     <div id="box">
+        <div id="progressBorder">0%
+        </div>
+        <div id="progress">.</div>
         <h4 id="header">Guess a number between 1 and 10000</h4>
 
         <input type="number" placeholder="Type your guess here" autocomplete="off" id="guess" value="" />
@@ -221,16 +247,12 @@
         <p id="ln2" class="answerLines"></p>
         <p id="ln3" class="answerLines"></p>
 
-        <br><button onclick="expand()" class="expandButton nonSwitchButton">More Options</button>
-        <div class="expanded">
+        <br><button class="collapsible nonSwitchButton">More Options</button>
+        <div id="collapsibleMenu">
 
             <span class="adjustSizeFont">Smallest Number</span>
             <span class="adjustSize largestNum adjustSizeFont">Largest Number</span>
             <span id="aboveSwitch">Keep Number after Guess<br></span>
-            <button onclick="showInfo()" id="switchInfo">
-                <p id="infoText">?</p>
-            </button>
-            <div class=infoBox>This will save time with larger numbers</div>
             <input type="number" autocomplete="off" id="newSmallestNumber" class="adjustSizeInput" value="1" />
             <input type="number" autocomplete="off" id="newLargestNumber" class="adjustSizeInput" value="10000" />
             <button onclick="setRange()" id="setNumberRangeButton" class="notExpandable nonSwitchButton">Click to
@@ -253,6 +275,7 @@
         var validNumber = true;
         var tries = 0;
         var switchOn = false;
+        var currentPercentage = 0;
 
         document.getElementById("header").innerHTML =
             "Guess a number between " + smallest + " and " + largest;
@@ -263,6 +286,23 @@
                 document.getElementById("guessButton").click();
             }
         });
+
+        /* var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    coll.style.borderRadius = "10px 10px 0 0";
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    coll.style.borderRadius = "10px";
+                }
+            });
+        } */
 
         function guess() { //when guess button clicked
             var yourGuess = document.getElementById("guess").value;
@@ -304,7 +344,30 @@
                 guessedRight = true;
             }
 
-            if (validNumber == true) { //adds the guess to the guesses array
+            currentPercentage = 100 - ((largestPossible - smallestPossible) / (largest - smallest) * 100);
+
+
+            var percentageDisplayed;
+            if (currentPercentage >= 99) {
+                percentageDisplayed = currentPercentage.toFixed(2);
+            } else {
+                percentageDisplayed = currentPercentage.toFixed();
+            }
+
+            if (percentageDisplayed > 99.99 && guessedRight == false) {
+                percentageDisplayed = 99.99;
+            } else if (guessedRight == true) {
+                percentageDisplayed = 100;
+            }
+
+            document.getElementById("progressBorder").innerHTML = percentageDisplayed + "%";
+            document.getElementById("progress").style.width = currentPercentage - 2 + "%";
+            if (currentPercentage > 98 && guessedRight == false) {
+                document.getElementById("progress").style.width = "98%";
+            }
+
+            var repeatedNumber = guesses.indexOf(yourGuess);
+            if (validNumber == true && repeatedNumber == -1) { //adds the guess to the guesses array
                 guesses.push(yourGuess)
                 document.getElementById("ln3").innerHTML =
                     "Your guesses: " + guesses.join(", ");
@@ -331,7 +394,7 @@
         function playAgain() { //when pick another number or play again is pressed
             document.getElementById("guessButton").disabled = false;
             document.getElementById("ln3").innerHTML = "";
-            guessedRight == false;
+            guesses = []
             document.getElementById("playAgain").innerHTML = "Pick another Number";
             document.getElementById("ln1").innerHTML = "New number chosen";
             smallestPossible = smallest;
@@ -343,6 +406,9 @@
                     "New number chosen. The number was " + number + ".";
             }
             number = getRndInteger(smallest, largest);
+            currentPercentage = 0
+            document.getElementById("progressBorder").innerHTML = currentPercentage + "%"
+            document.getElementById("progress").style.width = currentPercentage
         }
 
         function setRange() { //after new smallest/largest number is set
@@ -361,8 +427,6 @@
                 guessedRight = false;
             }
         }
-
-        function expand() { }
 
 
         function switchClicked() {
