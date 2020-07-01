@@ -355,9 +355,9 @@
             }
 
             if (percentageDisplayed > 99.99 && guessedRight == false) {
-                percentageDisplayed = 99.99;
+                currentPercentage = 99.99;
             } else if (guessedRight == true) {
-                percentageDisplayed = 100;
+                currentPercentage = 100;
             }
 
             document.getElementById("progressBorder").innerHTML = percentageDisplayed + "%";
