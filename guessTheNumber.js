@@ -10,11 +10,11 @@ var tries = 0;
 var switchOn = false;
 var currentPercentage = 0;
 
-window.onload = function() {
+window.onload = function () {
     document.getElementById("header").innerHTML =
         "Guess a number between " + smallest + " and " + largest;
 
-    document.getElementById("guess").addEventListener("keyup", function(event) {
+    document.getElementById("guess").addEventListener("keyup", function (event) {
         if (event.keyCode === 13) {
             event.preventDefault();
             document.getElementById("guessButton").click();
@@ -41,7 +41,8 @@ window.onload = function() {
 
 function guess() { //when guess button clicked
     var yourGuess = document.getElementById("guess").value;
-    var n = yourGuess.indexOf("e");
+    var period = yourGuess.indexOf(".");
+    var e = yourGuess.indexOf("e");
     guessedRight = false;
 
     if (switchOn == false) {
@@ -54,13 +55,15 @@ function guess() { //when guess button clicked
         tries = (guesses.length + 1) + " tries"
     }
 
-    if (yourGuess < Number(smallestPossible) || yourGuess > Number(largestPossible)) {
-        if (yourGuess == "") {
-            document.getElementById("ln1").innerHTML = "Please type a number";
-        } else {
-            document.getElementById("ln1").innerHTML =
-                "Please guess between " + smallestPossible + " and " + largestPossible;
-        }
+    if (yourGuess == "") {
+        document.getElementById("ln1").innerHTML = "Please type a number";
+        validNumber = false;
+    } else if (period > -1 || e > -1) {
+        document.getElementById("ln1").innerHTML = "Please only type integers"
+        validNumber = false;
+    } else if (yourGuess < Number(smallestPossible) || yourGuess > Number(largestPossible)) {
+        document.getElementById("ln1").innerHTML =
+            "Please guess between " + smallestPossible + " and " + largestPossible;
         validNumber = false;
     } else if (yourGuess < number) {
         document.getElementById("ln1").innerHTML = yourGuess + " is too small";
@@ -176,8 +179,4 @@ function switchClicked() {
         document.getElementById("switchInside").style.margin = "1px 10px 1px 1px";
         switchOn = false;
     }
-}
-
-function showInfo() {
-    var shown = false;
 }
