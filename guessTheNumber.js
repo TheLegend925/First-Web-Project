@@ -155,6 +155,11 @@ function setRange() { //after new smallest/largest number is set
     if (newSmallestNum != smallest || newLargestNum != largest) {
         smallest = newSmallestNum;
         largest = newLargestNum;
+        if (largest > smallest) {
+            var lastNumber = document.getElementById("newSmallestNum").innerHTML;
+            document.getElementById("newSmallestNum").innerHTML = document.getElementById("newLargestNum");
+            document.getElementById("newLargestNum") = lastNumber;
+        }
         document.getElementById("header").innerHTML =
             "Guess a number between " + smallest + " and " + largest;
         smallestPossible = smallest;
